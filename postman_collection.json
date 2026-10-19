@@ -1,0 +1,650 @@
+{
+  "info": {
+    "_postman_id": "9d10ad47-7ce3-481b-a991-62e5ca6af5db",
+    "name": "Gestion de Prêts BCM",
+    "description": "Collection Postman pour l'API REST du projet gestion-prets-bcm (stage BCM). Couvre les modules Employés, Catégories, Matériels et Prêts.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Employés",
+      "item": [
+        {
+          "name": "Lister les employés",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/employes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "employes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consulter un employé",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/employes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "employes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rechercher des employés par nom",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/employes/recherche?nom=Ahmed",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "employes",
+                "recherche"
+              ],
+              "query": [
+                {
+                  "key": "nom",
+                  "value": "Ahmed"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Créer un employé",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/employes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "employes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"matricule\": \"MAT010\",\n  \"nom\": \"Mohamed Vall\",\n  \"departement\": \"Ressources Humaines\",\n  \"email\": \"mohamed.vall@bcm.mr\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Modifier un employé",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/employes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "employes",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"matricule\": \"MAT010\",\n  \"nom\": \"Mohamed Vall\",\n  \"departement\": \"Ressources Humaines\",\n  \"email\": \"mohamed.vall@bcm.mr\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Supprimer un employé",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/employes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "employes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Catégories",
+      "item": [
+        {
+          "name": "Lister les catégories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consulter une catégorie",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Créer une catégorie",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"TEL\",\n  \"libelle\": \"Téléphone\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Modifier une catégorie",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"TEL\",\n  \"libelle\": \"Téléphone\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Supprimer une catégorie",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Matériels",
+      "item": [
+        {
+          "name": "Lister les matériels",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/materiels",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "materiels"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consulter un matériel",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/materiels/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "materiels",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lister les matériels disponibles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/materiels/disponibles",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "materiels",
+                "disponibles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rechercher des matériels par désignation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/materiels/recherche?designation=Dell",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "materiels",
+                "recherche"
+              ],
+              "query": [
+                {
+                  "key": "designation",
+                  "value": "Dell"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Créer un matériel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/materiels",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "materiels"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numeroInventaire\": \"INV010\",\n  \"designation\": \"Ordinateur portable\",\n  \"categorieId\": 1,\n  \"marque\": \"Dell\",\n  \"modele\": \"Latitude 5440\",\n  \"etatPhysique\": \"Bon\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Modifier un matériel",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/materiels/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "materiels",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numeroInventaire\": \"INV010\",\n  \"designation\": \"Ordinateur portable\",\n  \"categorieId\": 1,\n  \"marque\": \"Dell\",\n  \"modele\": \"Latitude 5440\",\n  \"etatPhysique\": \"Bon\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Supprimer un matériel",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/materiels/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "materiels",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Prêts",
+      "item": [
+        {
+          "name": "Lister les prêts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/prets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "prets"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consulter un prêt",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/prets/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "prets",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Historique des prêts d'un employé",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/prets/employe/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "prets",
+                "employe",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Historique des prêts d'un matériel",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/prets/materiel/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "prets",
+                "materiel",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lister les prêts en cours",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/prets/en-cours",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "prets",
+                "en-cours"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lister les prêts en retard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/prets/en-retard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "prets",
+                "en-retard"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Créer un prêt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/prets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "prets"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"materielId\": 1,\n  \"employeId\": 1,\n  \"datePret\": \"2026-10-08\",\n  \"dateRetourPrevue\": \"2026-10-22\",\n  \"commentaire\": \"Mission terrain\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Enregistrer le retour d'un prêt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/prets/1/retour",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "prets",
+                "1",
+                "retour"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dateRetourEffective\": \"2026-10-20\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

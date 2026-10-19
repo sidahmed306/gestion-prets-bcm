@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  /* Vert institutionnel, derive de la couleur exacte du logo BCM (#25A64B) */
+  --color-brand-primary-50: #f2fcf5;
+  --color-brand-primary-100: #def8e5;
+  --color-brand-primary-200: #b4eec5;
+  --color-brand-primary-300: #7ae198;
+  --color-brand-primary-400: #43d56e;
+  --color-brand-primary-500: #27af4f;
+  --color-brand-primary-600: #1f8a3e;
+  --color-brand-primary-700: #17682f;
+  --color-brand-primary-800: #124f24;
+  --color-brand-primary-900: #0d3a1a;
+  --color-brand-primary-950: #092a13;
+
+  /* Or institutionnel, derive de la couleur exacte du logo BCM (#F9EB16), desature pour un rendu bronze sobre */
+  --color-brand-gold-50: #fafaef;
+  --color-brand-gold-100: #f4f0d2;
+  --color-brand-gold-200: #ebe2a2;
+  --color-brand-gold-300: #e2ce69;
+  --color-brand-gold-400: #dcbb38;
+  --color-brand-gold-500: #c59f20;
+  --color-brand-gold-600: #a47f19;
+  --color-brand-gold-700: #856314;
+  --color-brand-gold-800: #694c11;
+  --color-brand-gold-900: #4d360f;
+
+  /* Neutres anthracite a sous-teinte verte discrete, pour rester coherent avec la marque */
+  --color-ink-50: #f8f9f9;
+  --color-ink-100: #f2f3f2;
+  --color-ink-200: #e2e4e3;
+  --color-ink-300: #cacecc;
+  --color-ink-400: #9fa7a3;
+  --color-ink-500: #75807a;
+  --color-ink-600: #5d6561;
+  --color-ink-700: #444b47;
+  --color-ink-800: #2c302e;
+  --color-ink-900: #1d201f;
+  --color-ink-950: #131514;
+
+  /* Etats de statut, tons sourds */
+  --color-status-info-bg: #e9edf2;
+  --color-status-info-text: #364c63;
+  --color-status-danger-bg: #f4e4e1;
+  --color-status-danger-text: #7e3125;
+
+  --color-page: #f8f9f9;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  background-color: var(--color-page);
+  color: var(--color-ink-900);
+}

@@ -1,0 +1,127 @@
+### Variables
+@baseUrl = http://localhost:8080
+
+###############################################
+# EMPLOYÉS
+###############################################
+
+### Liste des employés
+GET {{baseUrl}}/api/employes
+
+### Un employé par id
+GET {{baseUrl}}/api/employes/1
+
+### Recherche par nom
+GET {{baseUrl}}/api/employes/recherche?nom=sid
+
+### Créer un employé
+POST {{baseUrl}}/api/employes
+Content-Type: application/json
+
+{
+  "matricule": "MAT100",
+  "nom": "Test Employe",
+  "departement": "Informatique",
+  "email": "test@bcm.mr"
+}
+
+### Modifier un employé
+PUT {{baseUrl}}/api/employes/1
+Content-Type: application/json
+
+{
+  "matricule": "MAT001",
+  "nom": "Ahmed Sidi",
+  "departement": "IT",
+  "email": "ahmed@bcm.mr"
+}
+
+###############################################
+# CATÉGORIES
+###############################################
+
+### Liste des catégories
+GET {{baseUrl}}/api/categories
+
+### Créer une catégorie
+POST {{baseUrl}}/api/categories
+Content-Type: application/json
+
+{
+  "code": "TEL",
+  "libelle": "Téléphone"
+}
+
+###############################################
+# MATÉRIELS
+###############################################
+
+### Liste des matériels
+GET {{baseUrl}}/api/materiels
+
+### Matériels disponibles
+GET {{baseUrl}}/api/materiels/disponibles
+
+### Recherche par désignation
+GET {{baseUrl}}/api/materiels/recherche?designation=dell
+
+### Créer un matériel
+POST {{baseUrl}}/api/materiels
+Content-Type: application/json
+
+{
+  "numeroInventaire": "INV999",
+  "designation": "Test Materiel",
+  "categorieId": 1,
+  "marque": "Test",
+  "modele": "X1",
+  "etatPhysique": "Bon"
+}
+
+###############################################
+# PRÊTS
+###############################################
+
+### Liste des prêts
+GET {{baseUrl}}/api/prets
+
+### Prêts en cours
+GET {{baseUrl}}/api/prets/en-cours
+
+### Prêts en retard
+GET {{baseUrl}}/api/prets/en-retard
+
+### Historique des prêts d'un employé
+GET {{baseUrl}}/api/prets/employe/1
+
+### Historique des prêts d'un matériel
+GET {{baseUrl}}/api/prets/materiel/4
+
+### Créer un prêt (matériel disponible)
+POST {{baseUrl}}/api/prets
+Content-Type: application/json
+
+{
+  "materielId": 2,
+  "employeId": 2,
+  "datePret": "2026-10-08",
+  "dateRetourPrevue": "2026-10-20",
+  "commentaire": "Test via REST Client"
+}
+
+### TEST RÈGLE MÉTIER : re-prêter un matériel déjà en cours doit échouer (409)
+POST {{baseUrl}}/api/prets
+Content-Type: application/json
+
+{
+  "materielId": 1,
+  "employeId": 2,
+  "datePret": "2026-10-08",
+  "dateRetourPrevue": "2026-10-15"
+}
+
+### Restituer un prêt (remplace l'id par celui obtenu après création)
+POST {{baseUrl}}/api/prets/1/retour
+Content-Type: application/json
+
+{}
