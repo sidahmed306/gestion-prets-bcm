@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,6 +25,7 @@ import mr.bcm.gestionprets.entity.Pret;
 import mr.bcm.gestionprets.entity.StatutPret;
 import mr.bcm.gestionprets.exception.BusinessRuleException;
 import mr.bcm.gestionprets.exception.ResourceNotFoundException;
+import mr.bcm.gestionprets.notification.NotificationService;
 import mr.bcm.gestionprets.repository.EmployeRepository;
 import mr.bcm.gestionprets.repository.MaterielRepository;
 import mr.bcm.gestionprets.repository.PretRepository;
@@ -40,6 +42,9 @@ class PretServiceTest {
     @Mock
     private EmployeRepository employeRepository;
 
+    @Mock
+    private NotificationService notificationService;
+
     private PretService pretService;
 
     private Materiel materiel;
@@ -47,7 +52,7 @@ class PretServiceTest {
 
     @BeforeEach
     void setUp() {
-        pretService = new PretService(pretRepository, materielRepository, employeRepository);
+        pretService = new PretService(pretRepository, materielRepository, employeRepository, notificationService);
         materiel = Materiel.builder().id(1L).numeroInventaire("INV001").build();
         employe = Employe.builder().id(1L).matricule("MAT001").nom("Ahmed").build();
     }
@@ -65,6 +70,7 @@ class PretServiceTest {
         assertThat(pret.getMateriel()).isEqualTo(materiel);
         assertThat(pret.getEmploye()).isEqualTo(employe);
         assertThat(pret.getCommentaire()).isEqualTo("Mission");
+        verify(notificationService).notifierPretCree(pret);
     }
 
     @Test
@@ -109,6 +115,7 @@ class PretServiceTest {
                 .hasMessageContaining("42");
 
         verify(pretRepository, never()).save(any());
+        verify(notificationService, never()).notifierPretCree(any());
     }
 
     @Test
@@ -121,6 +128,7 @@ class PretServiceTest {
 
         assertThat(resultat.getStatut()).isEqualTo(StatutPret.RETOURNE);
         assertThat(resultat.getDateRetourEffective()).isEqualTo(LocalDate.of(2026, 10, 7));
+        verify(notificationService).notifierRetour(resultat);
     }
 
     @Test
@@ -172,5 +180,19 @@ class PretServiceTest {
         List<Pret> resultat = pretService.findByMateriel(1L);
 
         assertThat(resultat).containsExactly(pret);
+    }
+
+    @Test
+    void envoyerRappelsRetard_compteSeulementLesEmailsReellementEnvoyes() {
+        Pret avecEmail = Pret.builder().id(1L).statut(StatutPret.EN_COURS).build();
+        Pret sansEmail = Pret.builder().id(2L).statut(StatutPret.EN_COURS).build();
+        when(pretRepository.findByStatutAndDateRetourPrevueBefore(any(), any())).thenReturn(List.of(avecEmail, sansEmail));
+        when(notificationService.notifierRetard(avecEmail)).thenReturn(true);
+        when(notificationService.notifierRetard(sansEmail)).thenReturn(false);
+
+        int envoyes = pretService.envoyerRappelsRetard();
+
+        assertThat(envoyes).isEqualTo(1);
+        verify(notificationService, times(2)).notifierRetard(any());
     }
 }

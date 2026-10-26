@@ -16,6 +16,7 @@ import { TextField, SelectField } from "../components/Form"
 import { Badge } from "../components/Badge"
 import { useToast } from "../components/Toast"
 import { getErrorMessage } from "../lib/errors"
+import { useAuth } from "../lib/auth"
 import { formatDate, todayIso } from "../lib/format"
 
 type Filtre = "tous" | "en_cours" | "en_retard" | "historique"
@@ -29,6 +30,7 @@ function statutDuPret(pret: PretResponse) {
 }
 
 export function Prets() {
+  const { peutModifier } = useAuth()
   const queryClient = useQueryClient()
   const notify = useToast()
   const { data: prets, isLoading } = useQuery({ queryKey: ["prets"], queryFn: pretsApi.findAll })
@@ -113,9 +115,11 @@ export function Prets() {
         title="Prêts"
         description="Suivi des emprunts de matériel par les employés"
         action={
-          <Button onClick={openCreate} disabled={materielsDisponibles.length === 0}>
-            <Plus size={16} /> Nouveau prêt
-          </Button>
+          peutModifier && (
+            <Button onClick={openCreate} disabled={materielsDisponibles.length === 0}>
+              <Plus size={16} /> Nouveau prêt
+            </Button>
+          )
         }
       />
 
@@ -164,7 +168,7 @@ export function Prets() {
                       <Badge tone={statut.tone}>{statut.label}</Badge>
                     </td>
                     <td className="px-4 py-2.5 text-right">
-                      {pret.statut === "EN_COURS" && (
+                      {peutModifier && pret.statut === "EN_COURS" && (
                         <button
                           onClick={() => {
                             setRetourCible(pret)

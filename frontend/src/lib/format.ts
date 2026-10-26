@@ -7,6 +7,17 @@ export function formatDate(isoDate: string | null): string {
   })
 }
 
+export function formatDateTime(isoDateTime: string | null): string {
+  if (!isoDateTime) return "—"
+  return new Date(isoDateTime).toLocaleString("fr-FR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+}
+
 export function joursDeRetard(dateRetourPrevue: string): number {
   const prevue = new Date(dateRetourPrevue + "T00:00:00")
   const aujourdhui = new Date()

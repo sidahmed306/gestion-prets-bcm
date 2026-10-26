@@ -69,6 +69,36 @@ export interface PretRetourRequest {
   dateRetourEffective?: string
 }
 
+export type Role = "ADMIN" | "GESTIONNAIRE" | "LECTEUR"
+
+export interface UtilisateurResponse {
+  id: number
+  username: string
+  nomComplet: string
+  role: Role
+  actif: boolean
+  derniereConnexion: string | null
+}
+
+export interface UtilisateurCreateRequest {
+  username: string
+  motDePasse: string
+  nomComplet: string
+  role: Role
+}
+
+export interface UtilisateurUpdateRequest {
+  nomComplet: string
+  role: Role
+  actif: boolean
+}
+
+export interface LoginResponse {
+  token: string
+  expiration: string
+  utilisateur: UtilisateurResponse
+}
+
 export interface ApiErrorBody {
   timestamp: string
   status: number

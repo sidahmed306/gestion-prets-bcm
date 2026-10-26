@@ -10,4 +10,6 @@ export const pretsApi = {
   creer: (data: PretRequest) => api.post<PretResponse>("/prets", data).then((r) => r.data),
   retourner: (id: number, data: PretRetourRequest) =>
     api.post<PretResponse>(`/prets/${id}/retour`, data).then((r) => r.data),
+  envoyerRappelsRetard: () =>
+    api.post<{ emailsEnvoyes: number }>("/prets/rappels-retard").then((r) => r.data),
 }

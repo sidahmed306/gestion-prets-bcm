@@ -13,6 +13,7 @@ import mr.bcm.gestionprets.entity.Pret;
 import mr.bcm.gestionprets.entity.StatutPret;
 import mr.bcm.gestionprets.exception.BusinessRuleException;
 import mr.bcm.gestionprets.exception.ResourceNotFoundException;
+import mr.bcm.gestionprets.notification.NotificationService;
 import mr.bcm.gestionprets.repository.EmployeRepository;
 import mr.bcm.gestionprets.repository.MaterielRepository;
 import mr.bcm.gestionprets.repository.PretRepository;
@@ -25,6 +26,7 @@ public class PretService {
     private final PretRepository pretRepository;
     private final MaterielRepository materielRepository;
     private final EmployeRepository employeRepository;
+    private final NotificationService notificationService;
 
     public List<Pret> findAll() {
         return pretRepository.findAll();
@@ -78,7 +80,9 @@ public class PretService {
                 .commentaire(commentaire)
                 .build();
 
-        return pretRepository.save(pret);
+        Pret enregistre = pretRepository.save(pret);
+        notificationService.notifierPretCree(enregistre);
+        return enregistre;
     }
 
     @Transactional
@@ -91,6 +95,24 @@ public class PretService {
 
         pret.setStatut(StatutPret.RETOURNE);
         pret.setDateRetourEffective(dateRetourEffective != null ? dateRetourEffective : LocalDate.now());
-        return pretRepository.save(pret);
+        Pret enregistre = pretRepository.save(pret);
+        notificationService.notifierRetour(enregistre);
+        return enregistre;
+    }
+
+    /**
+     * Envoie un rappel à chaque employé qui a un prêt en retard.
+     * Appelé automatiquement chaque matin (RappelRetardScheduler) ou à la main depuis l'interface.
+     *
+     * @return le nombre d'emails envoyés (les employés sans adresse email sont ignorés)
+     */
+    public int envoyerRappelsRetard() {
+        int envoyes = 0;
+        for (Pret pret : findEnRetard()) {
+            if (notificationService.notifierRetard(pret)) {
+                envoyes++;
+            }
+        }
+        return envoyes;
     }
 }

@@ -12,10 +12,12 @@ import { ConfirmDialog } from "../components/ConfirmDialog"
 import { TextField } from "../components/Form"
 import { useToast } from "../components/Toast"
 import { getErrorMessage } from "../lib/errors"
+import { useAuth } from "../lib/auth"
 
 const EMPTY_FORM: EmployeRequest = { matricule: "", nom: "", departement: "", email: "" }
 
 export function Employes() {
+  const { peutModifier } = useAuth()
   const queryClient = useQueryClient()
   const notify = useToast()
   const { data: employes, isLoading } = useQuery({ queryKey: ["employes"], queryFn: employesApi.findAll })
@@ -103,9 +105,11 @@ export function Employes() {
         title="Employés"
         description="Les personnes qui peuvent emprunter du matériel"
         action={
-          <Button onClick={openCreate}>
-            <Plus size={16} /> Nouvel employé
-          </Button>
+          peutModifier && (
+            <Button onClick={openCreate}>
+              <Plus size={16} /> Nouvel employé
+            </Button>
+          )
         }
       />
 
@@ -131,22 +135,24 @@ export function Employes() {
                   <td className="px-4 py-2.5 text-ink-500">{employe.departement || "—"}</td>
                   <td className="px-4 py-2.5 text-ink-500">{employe.email || "—"}</td>
                   <td className="px-4 py-2.5">
-                    <div className="flex justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                      <button
-                        onClick={() => openEdit(employe)}
-                        className="rounded-sm p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
-                        aria-label="Modifier"
-                      >
-                        <Pencil size={16} />
-                      </button>
-                      <button
-                        onClick={() => setDeleting(employe)}
-                        className="rounded-sm p-1.5 text-ink-400 hover:bg-status-danger-bg hover:text-status-danger-text"
-                        aria-label="Supprimer"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
+                    {peutModifier && (
+                      <div className="flex justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                        <button
+                          onClick={() => openEdit(employe)}
+                          className="rounded-sm p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
+                          aria-label="Modifier"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          onClick={() => setDeleting(employe)}
+                          className="rounded-sm p-1.5 text-ink-400 hover:bg-status-danger-bg hover:text-status-danger-text"
+                          aria-label="Supprimer"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}

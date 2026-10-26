@@ -16,7 +16,10 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,9 +33,14 @@ import mr.bcm.gestionprets.entity.Pret;
 import mr.bcm.gestionprets.entity.StatutPret;
 import mr.bcm.gestionprets.exception.BusinessRuleException;
 import mr.bcm.gestionprets.exception.ResourceNotFoundException;
+import mr.bcm.gestionprets.security.JwtUtilisateurConverter;
+import mr.bcm.gestionprets.security.SecurityConfig;
+import mr.bcm.gestionprets.security.SecurityErrorHandler;
 import mr.bcm.gestionprets.service.PretService;
 
 @WebMvcTest(PretController.class)
+@Import({ SecurityConfig.class, JwtUtilisateurConverter.class, SecurityErrorHandler.class })
+@WithMockUser(roles = "GESTIONNAIRE")
 class PretControllerTest {
 
     @Autowired
@@ -43,6 +51,9 @@ class PretControllerTest {
 
     @MockitoBean
     private PretService pretService;
+
+    @MockitoBean
+    private UserDetailsService userDetailsService;
 
     private Pret unPret() {
         Categorie categorie = Categorie.builder().id(1L).code("ORDI").libelle("Ordinateur portable").build();

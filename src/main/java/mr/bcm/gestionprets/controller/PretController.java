@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import mr.bcm.gestionprets.dto.PretRequest;
 import mr.bcm.gestionprets.dto.PretResponse;
 import mr.bcm.gestionprets.dto.PretRetourRequest;
+import mr.bcm.gestionprets.dto.RappelRetardResponse;
 import mr.bcm.gestionprets.entity.Pret;
 import mr.bcm.gestionprets.service.PretService;
 
@@ -72,5 +73,11 @@ public class PretController {
     public PretResponse retourner(@PathVariable Long id, @RequestBody(required = false) PretRetourRequest request) {
         LocalDate dateRetourEffective = request != null ? request.dateRetourEffective() : null;
         return PretResponse.of(pretService.retournerPret(id, dateRetourEffective));
+    }
+
+    /** Envoie tout de suite les rappels de retard, sans attendre la tâche automatique du matin. */
+    @PostMapping("/rappels-retard")
+    public RappelRetardResponse envoyerRappelsRetard() {
+        return new RappelRetardResponse(pretService.envoyerRappelsRetard());
     }
 }

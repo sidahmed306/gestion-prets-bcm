@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "9d10ad47-7ce3-481b-a991-62e5ca6af5db",
     "name": "Gestion de Prêts BCM",
-    "description": "Collection Postman pour l'API REST du projet gestion-prets-bcm (stage BCM). Couvre les modules Employés, Catégories, Matériels et Prêts.",
+    "description": "Collection Postman pour l'API REST du projet gestion-prets-bcm (stage BCM). Couvre l'authentification, les utilisateurs, les Employés, Catégories, Matériels et Prêts. Exécutez d'abord « Authentification > Se connecter » : le jeton est enregistré automatiquement dans la variable {{token}} et envoyé avec toutes les autres requêtes.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -10,9 +10,266 @@
       "key": "baseUrl",
       "value": "http://localhost:8080",
       "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "username",
+      "value": "admin",
+      "type": "string"
+    },
+    {
+      "key": "motDePasse",
+      "value": "Admin@BCM2026",
+      "type": "string"
     }
   ],
   "item": [
+    {
+      "name": "Authentification",
+      "item": [
+        {
+          "name": "Se connecter",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{username}}\",\n  \"motDePasse\": \"{{motDePasse}}\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.collectionVariables.set('token', pm.response.json().token);",
+                  "}",
+                  "pm.test('Connexion réussie', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mon profil",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Changer mon mot de passe",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/mot-de-passe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "mot-de-passe"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ancienMotDePasse\": \"Admin@BCM2026\",\n  \"nouveauMotDePasse\": \"NouveauMdp2026\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Utilisateurs (ADMIN)",
+      "item": [
+        {
+          "name": "Lister les utilisateurs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/utilisateurs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "utilisateurs"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consulter un utilisateur",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/utilisateurs/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "utilisateurs",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Créer un utilisateur",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/utilisateurs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "utilisateurs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"fatma.salem\",\n  \"motDePasse\": \"Gestion2026\",\n  \"nomComplet\": \"Fatma Mint Salem\",\n  \"role\": \"GESTIONNAIRE\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Modifier un utilisateur (rôle, activation)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/utilisateurs/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "utilisateurs",
+                "2"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomComplet\": \"Fatma Mint Salem\",\n  \"role\": \"LECTEUR\",\n  \"actif\": true\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Réinitialiser le mot de passe",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/utilisateurs/2/mot-de-passe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "utilisateurs",
+                "2",
+                "mot-de-passe"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nouveauMotDePasse\": \"Reinit2026\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Supprimer un utilisateur",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/utilisateurs/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "utilisateurs",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
     {
       "name": "Employés",
       "item": [
@@ -643,8 +900,38 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Envoyer les rappels de retard par email",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/prets/rappels-retard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "prets",
+                "rappels-retard"
+              ]
+            },
+            "description": "Envoie un email de rappel à chaque employé ayant un prêt en retard. Réponse : {\"emailsEnvoyes\": N}. Les emails sont visibles dans MailDev : http://localhost:1080"
+          },
+          "response": []
         }
       ]
     }
-  ]
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  }
 }

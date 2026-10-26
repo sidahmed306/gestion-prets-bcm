@@ -2,20 +2,60 @@
 @baseUrl = http://localhost:8080
 
 ###############################################
+# AUTHENTIFICATION (à exécuter en premier)
+###############################################
+
+### Connexion : le jeton est récupéré dans la variable token
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "motDePasse": "Admin@BCM2026"
+}
+
+@token = {{login.response.body.token}}
+
+### Mon profil
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{token}}
+
+### Lister les utilisateurs (ADMIN uniquement)
+GET {{baseUrl}}/api/utilisateurs
+Authorization: Bearer {{token}}
+
+### Créer un utilisateur (ADMIN uniquement)
+POST {{baseUrl}}/api/utilisateurs
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "username": "fatma.salem",
+  "motDePasse": "Gestion2026",
+  "nomComplet": "Fatma Mint Salem",
+  "role": "GESTIONNAIRE"
+}
+
+###############################################
 # EMPLOYÉS
 ###############################################
 
 ### Liste des employés
 GET {{baseUrl}}/api/employes
+Authorization: Bearer {{token}}
 
 ### Un employé par id
 GET {{baseUrl}}/api/employes/1
+Authorization: Bearer {{token}}
 
 ### Recherche par nom
 GET {{baseUrl}}/api/employes/recherche?nom=sid
+Authorization: Bearer {{token}}
 
 ### Créer un employé
 POST {{baseUrl}}/api/employes
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -27,6 +67,7 @@ Content-Type: application/json
 
 ### Modifier un employé
 PUT {{baseUrl}}/api/employes/1
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -42,9 +83,11 @@ Content-Type: application/json
 
 ### Liste des catégories
 GET {{baseUrl}}/api/categories
+Authorization: Bearer {{token}}
 
 ### Créer une catégorie
 POST {{baseUrl}}/api/categories
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -58,15 +101,19 @@ Content-Type: application/json
 
 ### Liste des matériels
 GET {{baseUrl}}/api/materiels
+Authorization: Bearer {{token}}
 
 ### Matériels disponibles
 GET {{baseUrl}}/api/materiels/disponibles
+Authorization: Bearer {{token}}
 
 ### Recherche par désignation
 GET {{baseUrl}}/api/materiels/recherche?designation=dell
+Authorization: Bearer {{token}}
 
 ### Créer un matériel
 POST {{baseUrl}}/api/materiels
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -84,21 +131,27 @@ Content-Type: application/json
 
 ### Liste des prêts
 GET {{baseUrl}}/api/prets
+Authorization: Bearer {{token}}
 
 ### Prêts en cours
 GET {{baseUrl}}/api/prets/en-cours
+Authorization: Bearer {{token}}
 
 ### Prêts en retard
 GET {{baseUrl}}/api/prets/en-retard
+Authorization: Bearer {{token}}
 
 ### Historique des prêts d'un employé
 GET {{baseUrl}}/api/prets/employe/1
+Authorization: Bearer {{token}}
 
 ### Historique des prêts d'un matériel
 GET {{baseUrl}}/api/prets/materiel/4
+Authorization: Bearer {{token}}
 
 ### Créer un prêt (matériel disponible)
 POST {{baseUrl}}/api/prets
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -111,6 +164,7 @@ Content-Type: application/json
 
 ### TEST RÈGLE MÉTIER : re-prêter un matériel déjà en cours doit échouer (409)
 POST {{baseUrl}}/api/prets
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -122,6 +176,11 @@ Content-Type: application/json
 
 ### Restituer un prêt (remplace l'id par celui obtenu après création)
 POST {{baseUrl}}/api/prets/1/retour
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {}
+
+### Envoyer les rappels de retard par email (emails visibles dans MailDev : http://localhost:1080)
+POST {{baseUrl}}/api/prets/rappels-retard
+Authorization: Bearer {{token}}

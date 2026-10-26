@@ -12,10 +12,12 @@ import { ConfirmDialog } from "../components/ConfirmDialog"
 import { TextField } from "../components/Form"
 import { useToast } from "../components/Toast"
 import { getErrorMessage } from "../lib/errors"
+import { useAuth } from "../lib/auth"
 
 const EMPTY_FORM: CategorieRequest = { code: "", libelle: "" }
 
 export function Categories() {
+  const { peutModifier } = useAuth()
   const queryClient = useQueryClient()
   const notify = useToast()
   const { data: categories, isLoading } = useQuery({ queryKey: ["categories"], queryFn: categoriesApi.findAll })
@@ -89,9 +91,11 @@ export function Categories() {
         title="Catégories"
         description="Les types de matériel (ordinateur, écran, téléphone...)"
         action={
-          <Button onClick={openCreate}>
-            <Plus size={16} /> Nouvelle catégorie
-          </Button>
+          peutModifier && (
+            <Button onClick={openCreate}>
+              <Plus size={16} /> Nouvelle catégorie
+            </Button>
+          )
         }
       />
 
@@ -113,22 +117,24 @@ export function Categories() {
                   <td className="px-4 py-2.5 font-medium text-ink-900">{categorie.code || "—"}</td>
                   <td className="px-4 py-2.5 text-ink-700">{categorie.libelle || "—"}</td>
                   <td className="px-4 py-2.5">
-                    <div className="flex justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                      <button
-                        onClick={() => openEdit(categorie)}
-                        className="rounded-sm p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
-                        aria-label="Modifier"
-                      >
-                        <Pencil size={16} />
-                      </button>
-                      <button
-                        onClick={() => setDeleting(categorie)}
-                        className="rounded-sm p-1.5 text-ink-400 hover:bg-status-danger-bg hover:text-status-danger-text"
-                        aria-label="Supprimer"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
+                    {peutModifier && (
+                      <div className="flex justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                        <button
+                          onClick={() => openEdit(categorie)}
+                          className="rounded-sm p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
+                          aria-label="Modifier"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          onClick={() => setDeleting(categorie)}
+                          className="rounded-sm p-1.5 text-ink-400 hover:bg-status-danger-bg hover:text-status-danger-text"
+                          aria-label="Supprimer"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
