@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import mr.bcm.gestionprets.entity.Role;
+import mr.bcm.gestionprets.entity.SourceCompte;
 import mr.bcm.gestionprets.entity.Utilisateur;
 import mr.bcm.gestionprets.exception.BusinessRuleException;
 import mr.bcm.gestionprets.exception.ResourceNotFoundException;
@@ -66,6 +67,10 @@ public class UtilisateurService {
                 throw new BusinessRuleException("Vous ne pouvez pas désactiver votre propre compte");
             }
         }
+        if (utilisateur.getSource() == SourceCompte.ANNUAIRE && utilisateur.getRole() != role) {
+            throw new BusinessRuleException("Le rôle d'un compte de l'annuaire se gère dans l'annuaire "
+                    + "(en ajoutant la personne au bon groupe), pas dans l'application");
+        }
         utilisateur.setNomComplet(nomComplet);
         utilisateur.setRole(role);
         utilisateur.setActif(actif);
@@ -75,6 +80,7 @@ public class UtilisateurService {
     @Transactional
     public void reinitialiserMotDePasse(Long id, String nouveauMotDePasse) {
         Utilisateur utilisateur = findById(id);
+        refuserSiAnnuaire(utilisateur);
         utilisateur.setMotDePasse(passwordEncoder.encode(nouveauMotDePasse));
         utilisateurRepository.save(utilisateur);
     }
@@ -82,6 +88,7 @@ public class UtilisateurService {
     @Transactional
     public void changerMonMotDePasse(String username, String ancienMotDePasse, String nouveauMotDePasse) {
         Utilisateur utilisateur = findByUsername(username);
+        refuserSiAnnuaire(utilisateur);
         if (!passwordEncoder.matches(ancienMotDePasse, utilisateur.getMotDePasse())) {
             throw new BusinessRuleException("L'ancien mot de passe est incorrect");
         }
@@ -96,6 +103,14 @@ public class UtilisateurService {
             throw new BusinessRuleException("Vous ne pouvez pas supprimer votre propre compte");
         }
         utilisateurRepository.delete(utilisateur);
+    }
+
+    /** Le mot de passe d'un compte de l'annuaire est celui de l'annuaire (compte Windows) : on n'y touche pas ici. */
+    private void refuserSiAnnuaire(Utilisateur utilisateur) {
+        if (utilisateur.getSource() == SourceCompte.ANNUAIRE) {
+            throw new BusinessRuleException("Le mot de passe d'un compte de l'annuaire se change dans l'annuaire "
+                    + "(mot de passe Windows), pas dans l'application");
+        }
     }
 
     @Transactional

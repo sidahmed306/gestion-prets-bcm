@@ -109,6 +109,7 @@ export function Utilisateurs() {
   }
 
   const estMoi = (utilisateur: UtilisateurResponse) => utilisateur.id === moi?.id
+  const vientDeLAnnuaire = editing?.source === "ANNUAIRE"
 
   return (
     <div>
@@ -132,6 +133,7 @@ export function Utilisateurs() {
                 <th className="px-4 py-2.5">Identifiant</th>
                 <th className="px-4 py-2.5">Nom</th>
                 <th className="px-4 py-2.5">Rôle</th>
+                <th className="px-4 py-2.5">Origine</th>
                 <th className="px-4 py-2.5">Statut</th>
                 <th className="px-4 py-2.5">Dernière connexion</th>
                 <th className="px-4 py-2.5" />
@@ -144,9 +146,19 @@ export function Utilisateurs() {
                     {utilisateur.username}
                     {estMoi(utilisateur) && <span className="ml-1.5 text-xs font-normal text-ink-400">(vous)</span>}
                   </td>
-                  <td className="px-4 py-2.5 text-ink-700">{utilisateur.nomComplet}</td>
+                  <td className="px-4 py-2.5">
+                    <p className="text-ink-700">{utilisateur.nomComplet}</p>
+                    {utilisateur.poste && (
+                      <p className="text-xs text-ink-500" title={utilisateur.departement ?? undefined}>
+                        {utilisateur.poste}
+                      </p>
+                    )}
+                  </td>
                   <td className="px-4 py-2.5">
                     <Badge tone={utilisateur.role === "ADMIN" ? "blue" : "slate"}>{ROLE_LIBELLES[utilisateur.role]}</Badge>
+                  </td>
+                  <td className="px-4 py-2.5 text-ink-500">
+                    {utilisateur.source === "ANNUAIRE" ? "Annuaire BCM" : "Compte local"}
                   </td>
                   <td className="px-4 py-2.5">
                     {utilisateur.actif ? <Badge tone="green">Actif</Badge> : <Badge tone="red">Désactivé</Badge>}
@@ -162,14 +174,16 @@ export function Utilisateurs() {
                       >
                         <Pencil size={16} />
                       </button>
-                      <button
-                        onClick={() => openReset(utilisateur)}
-                        className="rounded-sm p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
-                        aria-label="Réinitialiser le mot de passe"
-                        title="Réinitialiser le mot de passe"
-                      >
-                        <KeyRound size={16} />
-                      </button>
+                      {utilisateur.source === "LOCAL" && (
+                        <button
+                          onClick={() => openReset(utilisateur)}
+                          className="rounded-sm p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
+                          aria-label="Réinitialiser le mot de passe"
+                          title="Réinitialiser le mot de passe"
+                        >
+                          <KeyRound size={16} />
+                        </button>
+                      )}
                       {!estMoi(utilisateur) && (
                         <button
                           onClick={() => setDeleting(utilisateur)}
@@ -191,6 +205,12 @@ export function Utilisateurs() {
         <EmptyState icon={ShieldCheck} title="Aucun utilisateur" description="Créez un premier compte." />
       )}
 
+      <p className="mt-3 text-xs text-ink-500">
+        Les comptes « Annuaire BCM » sont créés automatiquement à la première connexion d'une personne de l'annuaire.
+        Leur rôle vient de leur direction et de leur poste dans l'annuaire (règles dans application.yml) ;
+        ici, on peut seulement les désactiver.
+      </p>
+
       <Modal open={creation} onClose={() => setCreation(false)} title="Nouvel utilisateur">
         <form
           onSubmit={(e) => {
@@ -199,6 +219,9 @@ export function Utilisateurs() {
           }}
           className="space-y-4"
         >
+          <p className="text-sm text-ink-600">
+            Compte local, pour une personne qui n'est pas dans l'annuaire (prestataire, compte de secours...).
+          </p>
           <TextField
             label="Identifiant de connexion"
             value={createForm.username}
@@ -246,14 +269,21 @@ export function Utilisateurs() {
             value={editForm.nomComplet}
             onChange={(e) => setEditForm({ ...editForm, nomComplet: e.target.value })}
             error={fieldErrors.nomComplet}
+            disabled={vientDeLAnnuaire}
             required
           />
           <RoleField
             value={editForm.role}
             onChange={(role) => setEditForm({ ...editForm, role })}
             error={fieldErrors.role}
-            disabled={editing !== null && estMoi(editing)}
+            disabled={vientDeLAnnuaire || (editing !== null && estMoi(editing))}
           />
+          {vientDeLAnnuaire && (
+            <p className="text-xs text-ink-500">
+              Compte de l'annuaire : le nom et le rôle sont recalculés à chaque connexion, à partir de la
+              direction et du poste de l'agent ({editing?.poste ?? "poste inconnu"}).
+            </p>
+          )}
           <label className="flex items-center gap-2 text-sm text-ink-700">
             <input
               type="checkbox"

@@ -184,3 +184,55 @@ Content-Type: application/json
 ### Envoyer les rappels de retard par email (emails visibles dans MailDev : http://localhost:1080)
 POST {{baseUrl}}/api/prets/rappels-retard
 Authorization: Bearer {{token}}
+
+###############################################
+# COMPTABILITÉ
+###############################################
+
+### Synthèse comptable (aujourd'hui)
+GET {{baseUrl}}/api/comptabilite/synthese
+Authorization: Bearer {{token}}
+
+### Synthèse comptable à la clôture de l'exercice
+GET {{baseUrl}}/api/comptabilite/synthese?date=2025-12-31
+Authorization: Bearer {{token}}
+
+### Plan d'amortissement d'un matériel
+GET {{baseUrl}}/api/comptabilite/materiels/1/plan
+Authorization: Bearer {{token}}
+
+###############################################
+# ANNUAIRE D'ENTREPRISE (LDAP)
+###############################################
+
+### Connexion : Responsable du développement (DSI) → GESTIONNAIRE (mot de passe : Bcm@2026)
+# @name loginAnnuaire
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "sidi.cheikh",
+  "motDePasse": "Bcm@2026"
+}
+
+### Connexion : Directrice de la Comptabilité → LECTEUR
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "fatma.salem",
+  "motDePasse": "Bcm@2026"
+}
+
+### Connexion : Comptable (ni DSI, ni directeur) → 403 accès refusé
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "oumar.kane",
+  "motDePasse": "Bcm@2026"
+}
+
+### Synchroniser les employés avec l'annuaire (ADMIN)
+POST {{baseUrl}}/api/annuaire/synchroniser-employes
+Authorization: Bearer {{token}}

@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.jayway.jsonpath.JsonPath;
 
+import mr.bcm.gestionprets.annuaire.ConnexionAnnuaireService;
 import mr.bcm.gestionprets.entity.Role;
 import mr.bcm.gestionprets.entity.Utilisateur;
 import mr.bcm.gestionprets.security.JwtService;
@@ -44,6 +45,9 @@ class AuthControllerTest {
 
     @MockitoBean
     private UserDetailsService userDetailsService;
+
+    @MockitoBean
+    private ConnexionAnnuaireService connexionAnnuaireService;
 
     private final Utilisateur ahmed = Utilisateur.builder()
             .id(1L).username("ahmed").nomComplet("Ahmed Sidi").role(Role.GESTIONNAIRE).actif(true).build();

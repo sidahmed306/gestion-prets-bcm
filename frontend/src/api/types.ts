@@ -34,6 +34,11 @@ export interface MaterielResponse {
   marque: string | null
   modele: string | null
   etatPhysique: string | null
+  prixAchat: number | null
+  dateAchat: string | null
+  dureeAmortissementAnnees: number | null
+  fournisseur: string | null
+  situationComptable: SituationComptable | null
 }
 
 export interface MaterielRequest {
@@ -43,6 +48,50 @@ export interface MaterielRequest {
   marque?: string
   modele?: string
   etatPhysique?: string
+  prixAchat?: number | null
+  dateAchat?: string | null
+  dureeAmortissementAnnees?: number | null
+  fournisseur?: string
+}
+
+export interface SituationComptable {
+  amortissementAnnuel: number
+  amortissementCumule: number
+  valeurNetteComptable: number
+  pourcentageAmorti: number
+  dateFinAmortissement: string
+  totalementAmorti: boolean
+}
+
+export interface LigneAmortissement {
+  exercice: number
+  dotation: number
+  cumul: number
+  valeurNette: number
+}
+
+export interface PlanAmortissement {
+  materielId: number
+  numeroInventaire: string
+  designation: string | null
+  prixAchat: number
+  dateAchat: string
+  dureeAmortissementAnnees: number
+  annuite: number
+  lignes: LigneAmortissement[]
+}
+
+export interface SyntheseComptable {
+  dateCalcul: string
+  nombreMateriels: number
+  nombreValorises: number
+  nombreNonValorises: number
+  nombreTotalementAmortis: number
+  valeurAchatTotale: number
+  amortissementCumuleTotal: number
+  valeurNetteTotale: number
+  dotationExerciceEnCours: number
+  parCategorie: { categorie: string; nombre: number; valeurAchat: number; valeurNette: number }[]
 }
 
 export interface PretResponse {
@@ -78,6 +127,19 @@ export interface UtilisateurResponse {
   role: Role
   actif: boolean
   derniereConnexion: string | null
+  /** LOCAL = compte créé dans l'application ; ANNUAIRE = compte de l'annuaire d'entreprise */
+  source: "LOCAL" | "ANNUAIRE"
+  /** Direction et poste, recopiés depuis l'annuaire (null pour un compte local) */
+  departement: string | null
+  poste: string | null
+}
+
+export interface SynchronisationResponse {
+  lus: number
+  crees: number
+  misAJour: number
+  inchanges: number
+  ignores: number
 }
 
 export interface UtilisateurCreateRequest {

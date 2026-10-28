@@ -2,6 +2,8 @@ package mr.bcm.gestionprets.entity;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -60,4 +62,16 @@ public class Utilisateur {
     private boolean actif;
 
     private LocalDateTime derniereConnexion;
+
+    /** Direction et poste, recopiés depuis l'annuaire (vides pour un compte local). */
+    private String departement;
+
+    private String poste;
+
+    /** LOCAL par défaut ; la valeur par défaut en base remplit aussi les comptes créés avant cette colonne. */
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'LOCAL'")
+    @Column(nullable = false, length = 20)
+    private SourceCompte source = SourceCompte.LOCAL;
 }

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
-import { ArrowRightLeft, KeyRound, LayoutDashboard, LogOut, ShieldCheck, Tags, Laptop, Users } from "lucide-react"
+import { ArrowRightLeft, KeyRound, Landmark, LayoutDashboard, LogOut, ShieldCheck, Tags, Laptop, Users } from "lucide-react"
 import clsx from "clsx"
 import { bcmLogoDataUri } from "../assets/bcmLogo"
 import { ROLE_LIBELLES, useAuth } from "../lib/auth"
@@ -21,6 +21,7 @@ const navItems: NavItem[] = [
   { to: "/materiels", label: "Matériels", icon: Laptop },
   { to: "/prets", label: "Prêts", icon: ArrowRightLeft },
   { to: "/categories", label: "Catégories", icon: Tags },
+  { to: "/comptabilite", label: "Comptabilité", icon: Landmark },
   { to: "/utilisateurs", label: "Utilisateurs", icon: ShieldCheck, adminSeulement: true },
 ]
 
@@ -77,12 +78,15 @@ export function Layout() {
               {ROLE_LIBELLES[utilisateur.role]}
             </p>
             <div className="mt-3 flex flex-col gap-0.5">
-              <button
-                onClick={() => setChangementMdp(true)}
-                className="flex items-center gap-2 rounded-sm py-1.5 text-sm text-brand-primary-200 transition-colors hover:text-white"
-              >
-                <KeyRound size={15} /> Mon mot de passe
-              </button>
+              {/* Compte de l'annuaire : le mot de passe est celui de Windows, il se change dans l'annuaire */}
+              {utilisateur.source === "LOCAL" && (
+                <button
+                  onClick={() => setChangementMdp(true)}
+                  className="flex items-center gap-2 rounded-sm py-1.5 text-sm text-brand-primary-200 transition-colors hover:text-white"
+                >
+                  <KeyRound size={15} /> Mon mot de passe
+                </button>
+              )}
               <button
                 onClick={seDeconnecter}
                 className="flex items-center gap-2 rounded-sm py-1.5 text-sm text-brand-primary-200 transition-colors hover:text-white"

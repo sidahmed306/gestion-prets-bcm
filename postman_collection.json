@@ -77,6 +77,52 @@
           ]
         },
         {
+          "name": "Se connecter avec un compte de l'annuaire (sidi.cheikh, DSI)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"sidi.cheikh\",\n  \"motDePasse\": \"Bcm@2026\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Responsable du développement à la DSI → rôle GESTIONNAIRE (règles d'accès de application.yml). Autres comptes : ahmed.sidi (Directeur SI → ADMIN), fatma.salem (Directrice Comptabilité → LECTEUR), oumar.kane (Comptable → refusé). Le jeton est enregistré dans {{token}}."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.collectionVariables.set('token', pm.response.json().token);",
+                  "}",
+                  "pm.test('Connexion réussie', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "Mon profil",
           "request": {
             "method": "GET",
@@ -653,7 +699,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"numeroInventaire\": \"INV010\",\n  \"designation\": \"Ordinateur portable\",\n  \"categorieId\": 1,\n  \"marque\": \"Dell\",\n  \"modele\": \"Latitude 5440\",\n  \"etatPhysique\": \"Bon\"\n}",
+              "raw": "{\n  \"numeroInventaire\": \"INV010\",\n  \"designation\": \"Ordinateur portable\",\n  \"categorieId\": 1,\n  \"marque\": \"Dell\",\n  \"modele\": \"Latitude 5440\",\n  \"etatPhysique\": \"Bon\",\n  \"prixAchat\": 1200000,\n  \"dateAchat\": \"2025-01-15\",\n  \"dureeAmortissementAnnees\": 3,\n  \"fournisseur\": \"Fournisseur exemple\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -918,6 +964,104 @@
               ]
             },
             "description": "Envoie un email de rappel à chaque employé ayant un prêt en retard. Réponse : {\"emailsEnvoyes\": N}. Les emails sont visibles dans MailDev : http://localhost:1080"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comptabilité",
+      "item": [
+        {
+          "name": "Synthèse comptable (aujourd'hui)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/comptabilite/synthese",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "comptabilite",
+                "synthese"
+              ]
+            },
+            "description": "Valeur d'achat, valeur nette, amortissements cumulés et dotation de l'année, au total et par catégorie."
+          },
+          "response": []
+        },
+        {
+          "name": "Synthèse comptable à une date (clôture)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/comptabilite/synthese?date=2025-12-31",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "comptabilite",
+                "synthese"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2025-12-31"
+                }
+              ]
+            },
+            "description": "Valeur du parc à la fin de la journée indiquée, par exemple la clôture de l'exercice."
+          },
+          "response": []
+        },
+        {
+          "name": "Plan d'amortissement d'un matériel",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/comptabilite/materiels/1/plan",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "comptabilite",
+                "materiels",
+                "1",
+                "plan"
+              ]
+            },
+            "description": "Une ligne par exercice : dotation, cumul, valeur nette. 409 si le matériel n'a pas d'infos comptables."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Annuaire (ADMIN)",
+      "item": [
+        {
+          "name": "Synchroniser les employés avec l'annuaire",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/annuaire/synchroniser-employes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "annuaire",
+                "synchroniser-employes"
+              ]
+            },
+            "description": "Crée ou met à jour les employés à partir de l'annuaire (lien par le matricule). Réponse : {lus, crees, misAJour, inchanges, ignores}."
           },
           "response": []
         }

@@ -50,7 +50,10 @@ export function Login() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 rounded-sm border border-ink-200 bg-white p-6 shadow-lg">
-          <h1 className="border-b border-ink-200 pb-3 font-serif text-base font-semibold text-ink-900">Connexion</h1>
+          <div className="border-b border-ink-200 pb-3">
+            <h1 className="font-serif text-base font-semibold text-ink-900">Connexion</h1>
+            <p className="mt-1 text-xs text-ink-500">Utilisez votre compte de l'annuaire BCM (identifiant Windows) ou un compte local.</p>
+          </div>
           {erreur && (
             <p role="alert" className="rounded-sm bg-status-danger-bg px-3 py-2 text-sm text-status-danger-text">
               {erreur}

@@ -61,6 +61,10 @@ public class MaterielService {
         materiel.setMarque(donnees.getMarque());
         materiel.setModele(donnees.getModele());
         materiel.setEtatPhysique(donnees.getEtatPhysique());
+        materiel.setPrixAchat(donnees.getPrixAchat());
+        materiel.setDateAchat(donnees.getDateAchat());
+        materiel.setDureeAmortissementAnnees(donnees.getDureeAmortissementAnnees());
+        materiel.setFournisseur(donnees.getFournisseur());
         materiel.setCategorie(resoudreCategorie(donnees.getCategorie()));
         return materielRepository.save(materiel);
     }

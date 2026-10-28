@@ -20,6 +20,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import mr.bcm.gestionprets.annuaire.SynchronisationEmployesService;
+import mr.bcm.gestionprets.controller.AnnuaireController;
 import mr.bcm.gestionprets.controller.EmployeController;
 import mr.bcm.gestionprets.controller.UtilisateurController;
 import mr.bcm.gestionprets.entity.Employe;
@@ -29,7 +31,7 @@ import mr.bcm.gestionprets.service.EmployeService;
 import mr.bcm.gestionprets.service.UtilisateurService;
 
 /** Vérifie qui a le droit d'appeler quoi (règles de SecurityConfig). */
-@WebMvcTest({ EmployeController.class, UtilisateurController.class })
+@WebMvcTest({ EmployeController.class, UtilisateurController.class, AnnuaireController.class })
 @Import({ SecurityConfig.class, JwtUtilisateurConverter.class, SecurityErrorHandler.class, JwtService.class })
 class SecurityRulesTest {
 
@@ -51,6 +53,15 @@ class SecurityRulesTest {
 
     @MockitoBean
     private UserDetailsService userDetailsService;
+
+    @MockitoBean
+    private SynchronisationEmployesService synchronisationEmployesService;
+
+    @Test
+    @WithMockUser(roles = "GESTIONNAIRE")
+    void gestionnaire_nePeutPasSynchroniserLAnnuaire_renvoie403() throws Exception {
+        mockMvc.perform(post("/api/annuaire/synchroniser-employes")).andExpect(status().isForbidden());
+    }
 
     @Test
     void sansJeton_renvoie401() throws Exception {

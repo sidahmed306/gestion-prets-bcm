@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSearchParams } from "react-router-dom"
-import { Laptop, Pencil, Plus, Trash2 } from "lucide-react"
+import { Calculator, Laptop, Pencil, Plus, Trash2 } from "lucide-react"
 import clsx from "clsx"
 import { materielsApi } from "../api/materiels"
 import { categoriesApi } from "../api/categories"
@@ -18,6 +18,8 @@ import { Badge } from "../components/Badge"
 import { useToast } from "../components/Toast"
 import { getErrorMessage } from "../lib/errors"
 import { useAuth } from "../lib/auth"
+import { formatMontant, todayIso } from "../lib/format"
+import { PlanAmortissementModal } from "../components/PlanAmortissementModal"
 
 type Filtre = "tous" | "disponibles" | "empruntes"
 
@@ -28,6 +30,10 @@ const EMPTY_FORM: MaterielRequest = {
   marque: "",
   modele: "",
   etatPhysique: "",
+  prixAchat: null,
+  dateAchat: null,
+  dureeAmortissementAnnees: null,
+  fournisseur: "",
 }
 
 export function Materiels() {
@@ -48,6 +54,7 @@ export function Materiels() {
   const [form, setForm] = useState<MaterielRequest>(EMPTY_FORM)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [deleting, setDeleting] = useState<MaterielResponse | null>(null)
+  const [planMaterielId, setPlanMaterielId] = useState<number | null>(null)
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["materiels"] })
 
@@ -106,6 +113,10 @@ export function Materiels() {
       marque: materiel.marque ?? "",
       modele: materiel.modele ?? "",
       etatPhysique: materiel.etatPhysique ?? "",
+      prixAchat: materiel.prixAchat,
+      dateAchat: materiel.dateAchat,
+      dureeAmortissementAnnees: materiel.dureeAmortissementAnnees,
+      fournisseur: materiel.fournisseur ?? "",
     })
     setFieldErrors({})
     setModalOpen(true)
@@ -182,6 +193,7 @@ export function Materiels() {
                 <th className="px-4 py-2.5">Marque / Modèle</th>
                 <th className="px-4 py-2.5">État</th>
                 <th className="px-4 py-2.5">Statut</th>
+                <th className="px-4 py-2.5 text-right">Valeur actuelle</th>
                 <th className="px-4 py-2.5" />
               </tr>
             </thead>
@@ -202,25 +214,49 @@ export function Materiels() {
                       <Badge tone="green">Disponible</Badge>
                     )}
                   </td>
-                  <td className="px-4 py-2.5">
-                    {peutModifier && (
-                      <div className="flex justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                        <button
-                          onClick={() => openEdit(materiel)}
-                          className="rounded-sm p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
-                          aria-label="Modifier"
-                        >
-                          <Pencil size={16} />
-                        </button>
-                        <button
-                          onClick={() => setDeleting(materiel)}
-                          className="rounded-sm p-1.5 text-ink-400 hover:bg-status-danger-bg hover:text-status-danger-text"
-                          aria-label="Supprimer"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
+                  <td className="px-4 py-2.5 text-right tabular-nums">
+                    {materiel.situationComptable ? (
+                      <span
+                        className={materiel.situationComptable.totalementAmorti ? "text-ink-400" : "text-ink-900"}
+                        title={`Prix d'achat : ${formatMontant(materiel.prixAchat)} — amorti à ${materiel.situationComptable.pourcentageAmorti} %`}
+                      >
+                        {formatMontant(materiel.situationComptable.valeurNetteComptable)}
+                      </span>
+                    ) : (
+                      <span className="text-ink-400">—</span>
                     )}
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <div className="flex justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                      {materiel.situationComptable && (
+                        <button
+                          onClick={() => setPlanMaterielId(materiel.id)}
+                          className="rounded-sm p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
+                          aria-label="Plan d'amortissement"
+                          title="Plan d'amortissement"
+                        >
+                          <Calculator size={16} />
+                        </button>
+                      )}
+                      {peutModifier && (
+                        <>
+                          <button
+                            onClick={() => openEdit(materiel)}
+                            className="rounded-sm p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
+                            aria-label="Modifier"
+                          >
+                            <Pencil size={16} />
+                          </button>
+                          <button
+                            onClick={() => setDeleting(materiel)}
+                            className="rounded-sm p-1.5 text-ink-400 hover:bg-status-danger-bg hover:text-status-danger-text"
+                            aria-label="Supprimer"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -271,6 +307,50 @@ export function Materiels() {
             onChange={(e) => setForm({ ...form, etatPhysique: e.target.value })}
             placeholder="Bon, Usé, Endommagé..."
           />
+          <fieldset className="space-y-4 border-t border-ink-200 pt-4">
+            <legend className="pr-2 text-xs font-semibold uppercase tracking-wide text-ink-500">
+              Informations comptables (facultatif)
+            </legend>
+            <div className="grid grid-cols-2 gap-4">
+              <TextField
+                label="Prix d'achat (MRU)"
+                type="number"
+                min={0}
+                step="0.01"
+                value={form.prixAchat ?? ""}
+                onChange={(e) => setForm({ ...form, prixAchat: e.target.value === "" ? null : Number(e.target.value) })}
+                error={fieldErrors.prixAchat}
+              />
+              <TextField
+                label="Date d'achat"
+                type="date"
+                max={todayIso()}
+                value={form.dateAchat ?? ""}
+                onChange={(e) => setForm({ ...form, dateAchat: e.target.value || null })}
+                error={fieldErrors.dateAchat}
+              />
+              <TextField
+                label="Durée d'amortissement (ans)"
+                type="number"
+                min={1}
+                max={50}
+                value={form.dureeAmortissementAnnees ?? ""}
+                onChange={(e) =>
+                  setForm({ ...form, dureeAmortissementAnnees: e.target.value === "" ? null : Number(e.target.value) })
+                }
+                error={fieldErrors.dureeAmortissementAnnees}
+                placeholder="Ex : 3 pour un ordinateur"
+              />
+              <TextField
+                label="Fournisseur"
+                value={form.fournisseur}
+                onChange={(e) => setForm({ ...form, fournisseur: e.target.value })}
+              />
+            </div>
+            {fieldErrors.infosComptablesCompletes && (
+              <p className="text-xs text-status-danger-text">{fieldErrors.infosComptablesCompletes}</p>
+            )}
+          </fieldset>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>
               Annuler
@@ -281,6 +361,8 @@ export function Materiels() {
           </div>
         </form>
       </Modal>
+
+      <PlanAmortissementModal materielId={planMaterielId} onClose={() => setPlanMaterielId(null)} />
 
       <ConfirmDialog
         open={deleting !== null}

@@ -1,15 +1,19 @@
 package mr.bcm.gestionprets.security;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +22,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -55,8 +60,8 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/error").permitAll()
                         // Tout utilisateur connecté : voir son profil, changer son mot de passe
                         .requestMatchers("/api/auth/**").authenticated()
-                        // Gestion des comptes : administrateurs uniquement
-                        .requestMatchers("/api/utilisateurs/**").hasRole("ADMIN")
+                        // Gestion des comptes et synchronisation avec l'annuaire : administrateurs uniquement
+                        .requestMatchers("/api/utilisateurs/**", "/api/annuaire/**").hasRole("ADMIN")
                         // Lecture : tous les rôles connectés (y compris LECTEUR)
                         .requestMatchers(HttpMethod.GET, "/api/**").authenticated()
                         // Création / modification / suppression : ADMIN ou GESTIONNAIRE
@@ -79,13 +84,25 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    /** Vérifie un couple identifiant / mot de passe lors de la connexion. */
+    /**
+     * Vérifie un couple identifiant / mot de passe lors de la connexion.
+     * Spring essaie les "fournisseurs" dans l'ordre, jusqu'à ce que l'un d'eux accepte :
+     * <ol>
+     *   <li>les comptes LOCAUX (table utilisateurs, mot de passe BCrypt) ;</li>
+     *   <li>puis l'ANNUAIRE d'entreprise, s'il est activé.</li>
+     * </ol>
+     * Exception : un compte désactivé est refusé tout de suite, sans essayer l'annuaire.
+     */
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
-            PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder);
-        return new ProviderManager(provider);
+            PasswordEncoder passwordEncoder, ObjectProvider<LdapAuthenticationProvider> annuaireProvider) {
+        DaoAuthenticationProvider comptesLocaux = new DaoAuthenticationProvider(userDetailsService);
+        comptesLocaux.setPasswordEncoder(passwordEncoder);
+
+        List<AuthenticationProvider> fournisseurs = new ArrayList<>();
+        fournisseurs.add(comptesLocaux);
+        annuaireProvider.ifAvailable(fournisseurs::add);
+        return new ProviderManager(fournisseurs);
     }
 
     /** Clé secrète partagée qui sert à signer (encoder) et vérifier (decoder) les jetons. */

@@ -3,6 +3,7 @@ package mr.bcm.gestionprets.dto;
 import java.time.LocalDateTime;
 
 import mr.bcm.gestionprets.entity.Role;
+import mr.bcm.gestionprets.entity.SourceCompte;
 import mr.bcm.gestionprets.entity.Utilisateur;
 
 /** Ce qu'on renvoie au frontend : jamais le mot de passe, même haché. */
@@ -12,7 +13,10 @@ public record UtilisateurResponse(
         String nomComplet,
         Role role,
         boolean actif,
-        LocalDateTime derniereConnexion) {
+        LocalDateTime derniereConnexion,
+        SourceCompte source,
+        String departement,
+        String poste) {
 
     public static UtilisateurResponse of(Utilisateur utilisateur) {
         return new UtilisateurResponse(
@@ -21,6 +25,9 @@ public record UtilisateurResponse(
                 utilisateur.getNomComplet(),
                 utilisateur.getRole(),
                 utilisateur.isActif(),
-                utilisateur.getDerniereConnexion());
+                utilisateur.getDerniereConnexion(),
+                utilisateur.getSource(),
+                utilisateur.getDepartement(),
+                utilisateur.getPoste());
     }
 }

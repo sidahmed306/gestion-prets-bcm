@@ -1,0 +1,266 @@
+# =====================================================================
+# Annuaire LDAP de DÉMONSTRATION de la BCM (faux agents, faux mots de passe)
+# Chargé par le serveur LDAP intégré de Spring Boot au démarrage.
+# En production, on se connecte au vrai annuaire (Active Directory) à la place.
+#
+# Organisation : une branche (ou) par direction, et pour chaque agent :
+#   uid              = identifiant de connexion (compte Windows)
+#   employeeNumber   = matricule
+#   departmentNumber = direction
+#   title            = poste
+#
+# Mot de passe de tous les comptes de démonstration : Bcm@2026
+# =====================================================================
+
+dn: dc=bcm,dc=mr
+objectClass: top
+objectClass: domain
+dc: bcm
+
+dn: ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: organizationalUnit
+ou: personnes
+description: Agents de la Banque Centrale de Mauritanie
+
+# =====================================================================
+# DSI — Direction des Systèmes d'Information
+# =====================================================================
+
+dn: ou=DSI,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: organizationalUnit
+ou: DSI
+description: Direction des Systèmes d'Information
+
+dn: uid=ahmed.sidi,ou=DSI,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: ahmed.sidi
+cn: Ahmed Sidi
+sn: Sidi
+givenName: Ahmed
+displayName: Ahmed Sidi
+mail: ahmed.sidi@bcm.mr
+employeeNumber: MAT001
+departmentNumber: Direction des Systèmes d'Information
+title: Directeur des Systèmes d'Information
+userPassword: Bcm@2026
+
+dn: uid=sidi.cheikh,ou=DSI,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: sidi.cheikh
+cn: Sidi Ould Cheikh
+sn: Ould Cheikh
+givenName: Sidi
+displayName: Sidi Ould Cheikh
+mail: sidi.cheikh@bcm.mr
+employeeNumber: MAT005
+departmentNumber: Direction des Systèmes d'Information
+title: Responsable du développement
+userPassword: Bcm@2026
+
+dn: uid=mariem.ahmed,ou=DSI,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: mariem.ahmed
+cn: Mariem Mint Ahmed
+sn: Mint Ahmed
+givenName: Mariem
+displayName: Mariem Mint Ahmed
+mail: mariem.ahmed@bcm.mr
+employeeNumber: MAT006
+departmentNumber: Direction des Systèmes d'Information
+title: Responsable des bases de données
+userPassword: Bcm@2026
+
+dn: uid=yacoub.ba,ou=DSI,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: yacoub.ba
+cn: Yacoub Ba
+sn: Ba
+givenName: Yacoub
+displayName: Yacoub Ba
+mail: yacoub.ba@bcm.mr
+employeeNumber: MAT007
+departmentNumber: Direction des Systèmes d'Information
+title: Responsable réseaux et sécurité
+userPassword: Bcm@2026
+
+dn: uid=khadija.sow,ou=DSI,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: khadija.sow
+cn: Khadija Sow
+sn: Sow
+givenName: Khadija
+displayName: Khadija Sow
+mail: khadija.sow@bcm.mr
+employeeNumber: MAT008
+departmentNumber: Direction des Systèmes d'Information
+title: Technicienne support informatique
+userPassword: Bcm@2026
+
+# =====================================================================
+# DE — Direction des Études
+# =====================================================================
+
+dn: ou=DE,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: organizationalUnit
+ou: DE
+description: Direction des Études
+
+dn: uid=cheikh.brahim,ou=DE,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: cheikh.brahim
+cn: Cheikh Brahim
+sn: Brahim
+givenName: Cheikh
+displayName: Cheikh Brahim
+mail: cheikh.brahim@bcm.mr
+employeeNumber: MAT009
+departmentNumber: Direction des Études
+title: Directeur des Études
+userPassword: Bcm@2026
+
+dn: uid=aminetou.mohamed,ou=DE,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: aminetou.mohamed
+cn: Aminetou Mint Mohamed
+sn: Mint Mohamed
+givenName: Aminetou
+displayName: Aminetou Mint Mohamed
+mail: aminetou.mohamed@bcm.mr
+employeeNumber: MAT010
+departmentNumber: Direction des Études
+title: Économiste
+userPassword: Bcm@2026
+
+# =====================================================================
+# DRH — Direction des Ressources Humaines (GRH)
+# =====================================================================
+
+dn: ou=DRH,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: organizationalUnit
+ou: DRH
+description: Direction des Ressources Humaines
+
+dn: uid=mohamed.lemine,ou=DRH,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: mohamed.lemine
+cn: Mohamed Lemine
+sn: Lemine
+givenName: Mohamed
+displayName: Mohamed Lemine
+mail: mohamed.lemine@bcm.mr
+employeeNumber: MAT003
+departmentNumber: Direction des Ressources Humaines
+title: Directeur des Ressources Humaines
+userPassword: Bcm@2026
+
+dn: uid=zeinabou.diallo,ou=DRH,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: zeinabou.diallo
+cn: Zeinabou Diallo
+sn: Diallo
+givenName: Zeinabou
+displayName: Zeinabou Diallo
+mail: zeinabou.diallo@bcm.mr
+employeeNumber: MAT011
+departmentNumber: Direction des Ressources Humaines
+title: Chargée du recrutement
+userPassword: Bcm@2026
+
+# =====================================================================
+# DC — Direction de la Comptabilité
+# =====================================================================
+
+dn: ou=DC,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: organizationalUnit
+ou: DC
+description: Direction de la Comptabilité
+
+dn: uid=fatma.salem,ou=DC,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: fatma.salem
+cn: Fatma Mint Salem
+sn: Mint Salem
+givenName: Fatma
+displayName: Fatma Mint Salem
+mail: fatma.salem@bcm.mr
+employeeNumber: MAT002
+departmentNumber: Direction de la Comptabilité
+title: Directrice de la Comptabilité
+userPassword: Bcm@2026
+
+dn: uid=oumar.kane,ou=DC,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: oumar.kane
+cn: Oumar Kane
+sn: Kane
+givenName: Oumar
+displayName: Oumar Kane
+mail: oumar.kane@bcm.mr
+employeeNumber: MAT012
+departmentNumber: Direction de la Comptabilité
+title: Comptable
+userPassword: Bcm@2026
+
+# =====================================================================
+# DAI — Direction de l'Audit Interne
+# =====================================================================
+
+dn: ou=DAI,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: organizationalUnit
+ou: DAI
+description: Direction de l'Audit Interne
+
+dn: uid=aichetou.bilal,ou=DAI,ou=personnes,dc=bcm,dc=mr
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: aichetou.bilal
+cn: Aichetou Bilal
+sn: Bilal
+givenName: Aichetou
+displayName: Aichetou Bilal
+mail: aichetou.bilal@bcm.mr
+employeeNumber: MAT004
+departmentNumber: Direction de l'Audit Interne
+title: Auditrice interne
+userPassword: Bcm@2026

@@ -1,7 +1,8 @@
 import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { Pencil, Plus, Trash2, Users } from "lucide-react"
+import { Pencil, Plus, RefreshCw, Trash2, Users } from "lucide-react"
 import { employesApi } from "../api/employes"
+import { annuaireApi } from "../api/annuaire"
 import type { EmployeRequest, EmployeResponse } from "../api/types"
 import { PageHeader } from "../components/PageHeader"
 import { Button } from "../components/Button"
@@ -17,7 +18,7 @@ import { useAuth } from "../lib/auth"
 const EMPTY_FORM: EmployeRequest = { matricule: "", nom: "", departement: "", email: "" }
 
 export function Employes() {
-  const { peutModifier } = useAuth()
+  const { peutModifier, estAdmin } = useAuth()
   const queryClient = useQueryClient()
   const notify = useToast()
   const { data: employes, isLoading } = useQuery({ queryKey: ["employes"], queryFn: employesApi.findAll })
@@ -99,17 +100,43 @@ export function Employes() {
 
   const isSaving = creerMutation.isPending || modifierMutation.isPending
 
+  const synchroMutation = useMutation({
+    mutationFn: annuaireApi.synchroniserEmployes,
+    onSuccess: (bilan) => {
+      invalidate()
+      notify(
+        "success",
+        `Annuaire : ${bilan.crees} créé(s), ${bilan.misAJour} mis à jour, ${bilan.inchanges} inchangé(s)` +
+          (bilan.ignores > 0 ? `, ${bilan.ignores} ignoré(s) sans matricule` : ""),
+      )
+    },
+    onError: (error) => notify("error", getErrorMessage(error)),
+  })
+
   return (
     <div>
       <PageHeader
         title="Employés"
         description="Les personnes qui peuvent emprunter du matériel"
         action={
-          peutModifier && (
-            <Button onClick={openCreate}>
-              <Plus size={16} /> Nouvel employé
-            </Button>
-          )
+          <div className="flex gap-2">
+            {estAdmin && (
+              <Button
+                variant="secondary"
+                onClick={() => synchroMutation.mutate()}
+                disabled={synchroMutation.isPending}
+                title="Importer et mettre à jour les employés depuis l'annuaire d'entreprise"
+              >
+                <RefreshCw size={16} className={synchroMutation.isPending ? "animate-spin" : undefined} />
+                {synchroMutation.isPending ? "Synchronisation..." : "Synchroniser avec l'annuaire"}
+              </Button>
+            )}
+            {peutModifier && (
+              <Button onClick={openCreate}>
+                <Plus size={16} /> Nouvel employé
+              </Button>
+            )}
+          </div>
         }
       />
 

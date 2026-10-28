@@ -10,6 +10,7 @@ import { Materiels } from "./pages/Materiels"
 import { Prets } from "./pages/Prets"
 import { Login } from "./pages/Login"
 import { Utilisateurs } from "./pages/Utilisateurs"
+import { Comptabilite } from "./pages/Comptabilite"
 
 /** Pas connecté : on renvoie vers la page de connexion en retenant la page demandée. */
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -43,6 +44,7 @@ function App() {
         <Route path="materiels" element={<Materiels />} />
         <Route path="employes" element={<Employes />} />
         <Route path="categories" element={<Categories />} />
+        <Route path="comptabilite" element={<Comptabilite />} />
         <Route
           path="utilisateurs"
           element={

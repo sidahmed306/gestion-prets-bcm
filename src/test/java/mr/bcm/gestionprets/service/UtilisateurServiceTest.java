@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import mr.bcm.gestionprets.entity.Role;
+import mr.bcm.gestionprets.entity.SourceCompte;
 import mr.bcm.gestionprets.entity.Utilisateur;
 import mr.bcm.gestionprets.exception.BusinessRuleException;
 import mr.bcm.gestionprets.repository.UtilisateurRepository;
@@ -122,5 +123,42 @@ class UtilisateurServiceTest {
 
         assertThat(passwordEncoder.matches("nouveau-mdp", admin.getMotDePasse())).isTrue();
         verify(utilisateurRepository).save(admin);
+    }
+
+    private Utilisateur compteAnnuaire() {
+        return Utilisateur.builder().id(5L).username("fatma.salem").nomComplet("Fatma Mint Salem")
+                .role(Role.GESTIONNAIRE).actif(true).source(SourceCompte.ANNUAIRE).motDePasse("x").build();
+    }
+
+    @Test
+    void compteAnnuaire_leRoleSeGereDansLAnnuaire() {
+        when(utilisateurRepository.findById(5L)).thenReturn(Optional.of(compteAnnuaire()));
+
+        assertThatThrownBy(() -> utilisateurService.modifier(5L, "Fatma Mint Salem", Role.ADMIN, true, "admin"))
+                .isInstanceOf(BusinessRuleException.class)
+                .hasMessageContaining("annuaire");
+    }
+
+    @Test
+    void compteAnnuaire_peutQuandMemeEtreDesactiveParLAdmin() {
+        Utilisateur compte = compteAnnuaire();
+        when(utilisateurRepository.findById(5L)).thenReturn(Optional.of(compte));
+        when(utilisateurRepository.save(compte)).thenReturn(compte);
+
+        utilisateurService.modifier(5L, "Fatma Mint Salem", Role.GESTIONNAIRE, false, "admin");
+
+        assertThat(compte.isActif()).isFalse();
+    }
+
+    @Test
+    void compteAnnuaire_leMotDePasseNeSeChangePasDansLApplication() {
+        when(utilisateurRepository.findById(5L)).thenReturn(Optional.of(compteAnnuaire()));
+        when(utilisateurRepository.findByUsername("fatma.salem")).thenReturn(Optional.of(compteAnnuaire()));
+
+        assertThatThrownBy(() -> utilisateurService.reinitialiserMotDePasse(5L, "nouveau-mdp"))
+                .isInstanceOf(BusinessRuleException.class);
+        assertThatThrownBy(() -> utilisateurService.changerMonMotDePasse("fatma.salem", "x", "nouveau-mdp"))
+                .isInstanceOf(BusinessRuleException.class);
+        verify(utilisateurRepository, never()).save(any());
     }
 }

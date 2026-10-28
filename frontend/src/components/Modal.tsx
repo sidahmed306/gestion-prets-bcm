@@ -8,9 +8,11 @@ interface ModalProps {
   onClose: () => void
   title: string
   children: ReactNode
+  /** Fenêtre plus large, pour les tableaux */
+  large?: boolean
 }
 
-export function Modal({ open, onClose, title, children }: ModalProps) {
+export function Modal({ open, onClose, title, children, large = false }: ModalProps) {
   useEffect(() => {
     if (!open) return
     function handleKeyDown(event: KeyboardEvent) {
@@ -33,7 +35,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
             onClick={onClose}
           />
           <motion.div
-            className="relative w-full max-w-md rounded-sm border border-ink-200 bg-white p-6 shadow-lg"
+            className={`relative max-h-[90vh] w-full overflow-y-auto rounded-sm border border-ink-200 bg-white p-6 shadow-lg ${large ? "max-w-2xl" : "max-w-md"}`}
             initial={{ opacity: 0, y: 8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.98 }}

@@ -18,6 +18,14 @@ export function formatDateTime(isoDateTime: string | null): string {
   })
 }
 
+const formatMRU = new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+/** Montant en ouguiyas : 1 200 000,00 MRU */
+export function formatMontant(montant: number | null | undefined): string {
+  if (montant === null || montant === undefined) return "—"
+  return `${formatMRU.format(montant)} MRU`
+}
+
 export function joursDeRetard(dateRetourPrevue: string): number {
   const prevue = new Date(dateRetourPrevue + "T00:00:00")
   const aujourdhui = new Date()

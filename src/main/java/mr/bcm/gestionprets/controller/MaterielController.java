@@ -75,6 +75,10 @@ public class MaterielController {
                 .marque(request.marque())
                 .modele(request.modele())
                 .etatPhysique(request.etatPhysique())
+                .prixAchat(request.prixAchat())
+                .dateAchat(request.dateAchat())
+                .dureeAmortissementAnnees(request.dureeAmortissementAnnees())
+                .fournisseur(request.fournisseur())
                 .build();
     }
 }

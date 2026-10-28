@@ -1,0 +1,26 @@
+# Le reste de la configuration est dans application.properties.
+# Ce fichier YAML contient seulement les règles d'accès à l'annuaire :
+#   - YAML est lu en UTF-8, donc les accents (« Systèmes », « Études ») sont bien compris ;
+#   - une liste de règles est plus lisible en YAML.
+
+app:
+  annuaire:
+    # Le rôle dans l'application dépend de la DIRECTION et du POSTE de l'agent dans l'annuaire.
+    # Les règles sont lues dans l'ordre : la 1re qui correspond donne le rôle.
+    # Aucune règle ne correspond → pas d'accès (l'agent reste un simple "employé" qui emprunte du matériel).
+    #   departement : nom exact de la direction (absent = toutes les directions)
+    #   postes      : le poste commence par l'un de ces mots (absent = tous les postes)
+    regles:
+      # 1. Le Directeur des Systèmes d'Information administre l'application
+      - role: ADMIN
+        departement: Direction des Systèmes d'Information
+        postes: [Directeur, Directrice]
+
+      # 2. Les autres agents de la DSI (responsable du développement, des bases de données,
+      #    des réseaux, support...) gèrent le parc : prêts, retours, matériels
+      - role: GESTIONNAIRE
+        departement: Direction des Systèmes d'Information
+
+      # 3. Les directeurs des autres directions (Études, RH, Comptabilité...) consultent les prêts
+      - role: LECTEUR
+        postes: [Directeur, Directrice]
